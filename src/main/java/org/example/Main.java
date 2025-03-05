@@ -9,7 +9,7 @@ public class Main {
 
         Node<Integer> root = new Node<Integer>(10);
 
-        BinaryTreeImpl tree = new BinaryTreeImpl();
+        BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<Integer>();
         root = tree.insertNode(root, 12);
         root = tree.insertNode(root, 13);
         root = tree.insertNode(root, 14);

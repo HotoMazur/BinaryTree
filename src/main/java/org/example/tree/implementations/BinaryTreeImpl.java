@@ -2,7 +2,7 @@ package org.example.tree.implementations;
 
 import org.example.tree.interfaces.BinaryTreeInterface;
 
-public class BinaryTreeImpl implements BinaryTreeInterface {
+public class BinaryTreeImpl<T extends Comparable<T>> implements BinaryTreeInterface {
 
     @Override
     public <T extends Comparable<T>> void draw(Node<T> root) {

@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 public class BinaryTreeTests {
 
     private Node<Integer> root;
-    private BinaryTreeImpl tree;
+    private BinaryTreeImpl<Integer> tree;
 
     @BeforeEach
     void setup(){
         this.root = new Node<Integer>(10);
-        this.tree = new BinaryTreeImpl();
+        this.tree = new BinaryTreeImpl<Integer>();
 
         this.root = tree.insertNode(root, 12);
         this.root = tree.insertNode(root, 13);
