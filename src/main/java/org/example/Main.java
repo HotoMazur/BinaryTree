@@ -5,14 +5,16 @@ import org.example.tree.implementations.BinaryTreeImpl;
 import org.example.tree.implementations.Node;
 
 import java.io.*;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {
-    public static <T extends Comparable<T>> void main(String[] args) throws IOException {
+    public static <T> void main(String[] args) throws IOException {
 
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         Node<Integer> root = null;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<Integer>();
+        Comparator<Integer> intComparator = Integer::compare;
         
         while (true) {
             System.out.println("Choose the operation");
@@ -24,7 +26,7 @@ public class Main {
                     String data = r.readLine();
                     try {
                         Integer intData = Integer.parseInt(data);
-                        root = tree.insertNode(root, intData);
+                        root = tree.insertNode(root, intData, intComparator);
                     } catch (NumberFormatException e) {
                         System.out.println("Incorrect format");
                     }
@@ -34,7 +36,7 @@ public class Main {
                     String data = r.readLine();
                     try {
                         Integer intData = Integer.parseInt(data);
-                        root = tree.deleteNode(root, intData);
+                        root = tree.deleteNode(root, intData, intComparator);
                     } catch (NumberFormatException e) {
                         System.out.println("Incorrect format");
                     }
@@ -52,14 +54,14 @@ public class Main {
                             if (data[0].equals("1")) {
                                 try {
                                     Integer intData = Integer.parseInt(data[1]);
-                                    root = tree.insertNode(root, intData);
+                                    root = tree.insertNode(root, intData, intComparator);
                                 } catch (NumberFormatException e) {
                                     System.out.println("Incorrect format");
                                 }
                             } else if (data[0].equals("2")) {
                                 try {
                                     Integer intData = Integer.parseInt(data[1]);
-                                    root = tree.deleteNode(root, intData);
+                                    root = tree.deleteNode(root, intData, intComparator);
                                 } catch (NumberFormatException e) {
                                     System.out.println("Incorrect format");
                                 }

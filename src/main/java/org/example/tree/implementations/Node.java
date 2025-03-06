@@ -1,6 +1,6 @@
 package org.example.tree.implementations;
 
-public class Node<T extends Comparable<T>> implements Comparable<Node<T>> {
+public class Node<T> {
     public T data;
     public Node<T> left, right;
     public int height;
@@ -9,11 +9,6 @@ public class Node<T extends Comparable<T>> implements Comparable<Node<T>> {
         this.data = data;
         left = right = null;
         height = 1;
-    }
-
-    @Override
-    public int compareTo(Node<T> o) {
-        return this.data.compareTo(o.data);
     }
 }
 

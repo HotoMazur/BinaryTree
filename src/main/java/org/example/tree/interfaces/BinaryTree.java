@@ -2,11 +2,13 @@ package org.example.tree.interfaces;
 
 import org.example.tree.implementations.Node;
 
+import java.util.Comparator;
+
 public interface BinaryTree {
 
-    <T extends Comparable<T>> void draw(Node<T> root);
+    <T> void draw(Node<T> root);
 
-    <T extends Comparable<T>> Node<T> insertNode(Node<T> root, T val);
+    <T> Node<T> insertNode(Node<T> root, T val, Comparator<T> comparator);
 
-    <T extends Comparable<T>> Node<T> deleteNode(Node<T> root, T val);
+    <T> Node<T> deleteNode(Node<T> root, T val, Comparator<T> comparator);
 }
