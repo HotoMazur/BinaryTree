@@ -18,6 +18,11 @@ public class BinaryTreeImpl<E> implements BinaryTree {
             return root;
         }
 
+        if (val == null){
+            System.out.println("Can't add null");
+            return root;
+        }
+
         int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
             root.left = insertNode(root.left, val, comparator);
@@ -48,7 +53,6 @@ public class BinaryTreeImpl<E> implements BinaryTree {
     @Override
     public <T> Node<T> deleteNode(Node<T> root, T val, Comparator<T> comparator) {
         if (root == null) {
-            System.out.println("Root is null. Send correct root");
             return null;
         }
 
