@@ -2,7 +2,7 @@ package org.example.tree.interfaces;
 
 import org.example.tree.implementations.Node;
 
-public interface BinaryTreeInterface {
+public interface BinaryTree {
 
     <T extends Comparable<T>> void draw(Node<T> root);
 

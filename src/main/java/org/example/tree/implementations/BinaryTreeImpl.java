@@ -1,30 +1,22 @@
 package org.example.tree.implementations;
 
-import org.example.tree.interfaces.BinaryTreeInterface;
+import org.example.tree.interfaces.BinaryTree;
 
-public class BinaryTreeImpl<T extends Comparable<T>> implements BinaryTreeInterface {
+public class BinaryTreeImpl<E extends Comparable<E>> implements BinaryTree {
 
     @Override
     public <T extends Comparable<T>> void draw(Node<T> root) {
-        int h = height(root);
-        int maxWidth = (int) Math.pow(2, h) * 3; // Rough estimate for spacing
-        printTreeRec(root,"", true);
+        BTreePrinter.printNode(root);
     }
 
     private <T extends Comparable<T>> void printTreeRec(Node<T> root, String prefix, boolean isLeft){
-        if (root != null) {
-            System.out.println(prefix + (isLeft ? "├── " : "└── ") + root.data);
-            // Print left child with a vertical bar if there’s more to print
-            printTreeRec(root.left, prefix + (isLeft ? "│   " : "    "), true);
-            // Print right child without a bar unless it has siblings
-            printTreeRec(root.right, prefix + (isLeft ? "│   " : "    "), false);
-        }
+
     }
 
     @Override
     public <T extends Comparable<T>> Node<T> insertNode(Node<T> root, T val) {
         if (root == null) {
-            root = new Node<T>(val);
+            root = new Node<>(val);
             return root;
         }
 
@@ -60,7 +52,8 @@ public class BinaryTreeImpl<T extends Comparable<T>> implements BinaryTreeInterf
     @Override
     public <T extends Comparable<T>> Node<T> deleteNode(Node<T> root, T val) {
         if (root == null){
-            return root;
+            System.out.println("Root is null. Send correct root");
+            return null;
         }
 
         if (val.compareTo(root.data) < 0){
@@ -85,7 +78,7 @@ public class BinaryTreeImpl<T extends Comparable<T>> implements BinaryTreeInterf
         }
 
         if (root == null) {
-            return root;
+            return null;
         }
 
         root.height = Math.max(getHeight(root.left), getHeight(root.right)) + 1;
@@ -159,12 +152,5 @@ public class BinaryTreeImpl<T extends Comparable<T>> implements BinaryTreeInterf
             return 0;
         }
         return getHeight(N.left) - getHeight(N.right);
-    }
-
-    private <T extends Comparable<T>> int height(Node<T> root) {
-        if (root == null) {
-            return 0;
-        }
-        return 1 + Math.max(height(root.left), height(root.right));
     }
 }
