@@ -6,7 +6,7 @@ public interface BinaryTree<T> {
 
     void draw();
 
-    void insertNode(T val, Comparator<T> comparator);
+    void insertNode(T val);
 
-    void deleteNode(T val, Comparator<T> comparator);
+    void deleteNode(T val);
 }

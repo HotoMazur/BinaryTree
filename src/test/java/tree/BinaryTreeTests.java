@@ -15,13 +15,13 @@ public class BinaryTreeTests {
     void InsertionTwentyOneInt(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.insertNode( 21, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.insertNode( 21);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
         Assertions.assertEquals(21, root.right.right.data);
@@ -31,14 +31,14 @@ public class BinaryTreeTests {
     void InsertionEightInt(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.insertNode( 9, intComparator);
-        tree.insertNode( 8, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.insertNode( 9);
+        tree.insertNode( 8);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
         Assertions.assertEquals(9, root.left.left.data);
@@ -49,13 +49,13 @@ public class BinaryTreeTests {
     void DeleteNode(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.deleteNode( 12, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.deleteNode( 12);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(13, root.left.data);
     }
@@ -64,16 +64,16 @@ public class BinaryTreeTests {
     void DeleteNodeWithBalance(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.deleteNode( 13, intComparator);
-        tree.deleteNode( 10, intComparator);
-        tree.deleteNode( 12, intComparator);
-        tree.insertNode( 17, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.deleteNode( 13);
+        tree.deleteNode( 10);
+        tree.deleteNode( 12);
+        tree.insertNode( 17);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(16, root.data);
         Assertions.assertEquals(14, root.left.data);
@@ -84,12 +84,12 @@ public class BinaryTreeTests {
     void InsertDoubleNode(){
         Comparator<Double> doubleComparator = Double::compare;
         BinaryTreeImpl<Double> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10.2, doubleComparator);
-        tree.insertNode(12.2, doubleComparator);
-        tree.insertNode( 13.2, doubleComparator);
-        tree.insertNode(12.0, doubleComparator);
-        tree.insertNode(11.2, doubleComparator);
-        tree.insertNode(15.2, doubleComparator);
+        tree.insertNode(10.2);
+        tree.insertNode(12.2);
+        tree.insertNode( 13.2);
+        tree.insertNode(12.0);
+        tree.insertNode(11.2);
+        tree.insertNode(15.2);
         Node<Double> root = tree.getRoot();
         Assertions.assertEquals(12.2, root.data);
         Assertions.assertEquals(11.2, root.left.data);
@@ -100,13 +100,13 @@ public class BinaryTreeTests {
     void DeleteDoubleNode(){
         Comparator<Double> doubleComparator = Double::compare;
         BinaryTreeImpl<Double> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10.2, doubleComparator);
-        tree.insertNode( 12.2, doubleComparator);
-        tree.insertNode( 13.2, doubleComparator);
-        tree.insertNode( 12.0, doubleComparator);
-        tree.insertNode( 11.2, doubleComparator);
-        tree.insertNode( 15.2, doubleComparator);
-        tree.deleteNode( 12.2, doubleComparator);
+        tree.insertNode(10.2);
+        tree.insertNode( 12.2);
+        tree.insertNode( 13.2);
+        tree.insertNode( 12.0);
+        tree.insertNode( 11.2);
+        tree.insertNode( 15.2);
+        tree.deleteNode( 12.2);
         Node<Double> root = tree.getRoot();
         Assertions.assertEquals(13.2, root.data);
         Assertions.assertEquals(11.2, root.left.data);
@@ -117,11 +117,11 @@ public class BinaryTreeTests {
     void InsertStringNode(){
         Comparator<String> stringComparator = Comparator.naturalOrder();
         BinaryTreeImpl<String> tree = new BinaryTreeImpl<>();
-        tree.insertNode("Hi", stringComparator);
-        tree.insertNode( "Change", stringComparator);
-        tree.insertNode( "Delete", stringComparator);
-        tree.insertNode( "Notch", stringComparator);
-        tree.insertNode( "Abra Kadabra", stringComparator);
+        tree.insertNode("Hi");
+        tree.insertNode( "Change");
+        tree.insertNode( "Delete");
+        tree.insertNode( "Notch");
+        tree.insertNode( "Abra Kadabra");
         Node<String> root = tree.getRoot();
         Assertions.assertEquals("Delete", root.data);
         Assertions.assertEquals("Change", root.left.data);
@@ -132,13 +132,13 @@ public class BinaryTreeTests {
     void DeleteStringNode(){
         Comparator<String> stringComparator = Comparator.naturalOrder();
         BinaryTreeImpl<String> tree = new BinaryTreeImpl<>();
-        tree.insertNode("Hi", stringComparator);
-        tree.insertNode( "Change", stringComparator);
-        tree.insertNode( "Delete", stringComparator);
-        tree.insertNode( "Notch", stringComparator);
-        tree.insertNode( "Abra Kadabra", stringComparator);
-        tree.insertNode( "Why", stringComparator);
-        tree.deleteNode( "Why", stringComparator);
+        tree.insertNode("Hi");
+        tree.insertNode( "Change");
+        tree.insertNode( "Delete");
+        tree.insertNode( "Notch");
+        tree.insertNode( "Abra Kadabra");
+        tree.insertNode( "Why");
+        tree.deleteNode( "Why");
         Node<String> root = tree.getRoot();
         Assertions.assertEquals("Delete", root.data);
         Assertions.assertEquals("Change", root.left.data);
@@ -149,14 +149,14 @@ public class BinaryTreeTests {
     void AddNullNode(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.insertNode( 9, intComparator);
-        tree.insertNode( null, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.insertNode( 9);
+        tree.insertNode( null);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
@@ -165,14 +165,14 @@ public class BinaryTreeTests {
     void deleteNonExistNode(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.insertNode( 9, intComparator);
-        tree.deleteNode( 1, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.insertNode( 9);
+        tree.deleteNode( 1);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
@@ -181,14 +181,14 @@ public class BinaryTreeTests {
     void addExistNode(){
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
-        tree.insertNode(10, intComparator);
-        tree.insertNode( 12, intComparator);
-        tree.insertNode( 13, intComparator);
-        tree.insertNode( 14, intComparator);
-        tree.insertNode( 15, intComparator);
-        tree.insertNode( 16, intComparator);
-        tree.insertNode( 9, intComparator);
-        tree.insertNode( 10, intComparator);
+        tree.insertNode(10);
+        tree.insertNode( 12);
+        tree.insertNode( 13);
+        tree.insertNode( 14);
+        tree.insertNode( 15);
+        tree.insertNode( 16);
+        tree.insertNode( 9);
+        tree.insertNode( 10);
         Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
@@ -198,7 +198,7 @@ public class BinaryTreeTests {
         Comparator<Integer> intComparator = Integer::compare;
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
 
-        tree.deleteNode(10, intComparator);
+        tree.deleteNode(10);
         Node<Integer> root = tree.getRoot();
         Assertions.assertNull(root);
     }
