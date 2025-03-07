@@ -1,4 +1,4 @@
-package org.example.tree.implementations;
+package org.example.binarytree;
 
 public class Node<T> {
     public T data;

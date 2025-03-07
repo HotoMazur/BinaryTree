@@ -1,4 +1,6 @@
-package org.example.tree.implementations;
+package org.example.util;
+
+import org.example.binarytree.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
