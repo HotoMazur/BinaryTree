@@ -1,39 +1,44 @@
-package org.example.tree.implementations;
+package org.example.binarytree;
 
-import org.example.tree.interfaces.BinaryTree;
+import org.example.util.BTreePrinter;
 
 import java.util.Comparator;
 
-public class BinaryTreeImpl<E> implements BinaryTree {
+public class BinaryTreeImpl<T> implements BinaryTree<T> {
+    private Node<T> root = null;
+
 
     @Override
-    public <T> void draw(Node<T> root) {
-        BTreePrinter.printNode(root);
+    public void draw() {
+        BTreePrinter.printNode(this.root);
     }
 
     @Override
-    public <T> Node<T> insertNode(Node<T> root, T val, Comparator<T> comparator) {
+    public void insertNode(T val, Comparator<T> comparator) {
+        this.root = insertNodeRec(this.root, val, comparator);
+    }
+
+
+    public Node<T> insertNodeRec(Node<T> root, T val, Comparator<T> comparator) {
         if (root == null) {
-            root = new Node<>(val);
-            return root;
+            return new Node<>(val);
         }
 
-        if (val == null){
+        if (val == null) {
             System.out.println("Can't add null");
             return root;
         }
 
         int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
-            root.left = insertNode(root.left, val, comparator);
+            root.left = insertNodeRec(root.left, val, comparator);
         } else if (comparison > 0) {
-            root.right = insertNode(root.right, val, comparator);
+            root.right = insertNodeRec(root.right, val, comparator);
         } else {
             System.out.println("Value already exists");
         }
 
         root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right));
-
         int balance = getBalanced(root);
 
         if (balance > 1 && comparator.compare(val, root.left.data) < 0) return rightRotate(root);
@@ -51,16 +56,20 @@ public class BinaryTreeImpl<E> implements BinaryTree {
     }
 
     @Override
-    public <T> Node<T> deleteNode(Node<T> root, T val, Comparator<T> comparator) {
+    public void deleteNode(T val, Comparator<T> comparator) {
+        this.root = deleteNodeRec(this.root, val, comparator);
+    }
+
+    public Node<T> deleteNodeRec(Node<T> root, T val, Comparator<T> comparator) {
         if (root == null) {
             return null;
         }
 
         int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
-            root.left = deleteNode(root.left, val, comparator);
+            root.left = deleteNodeRec(root.left, val, comparator);
         } else if (comparison > 0) {
-            root.right = deleteNode(root.right, val, comparator);
+            root.right = deleteNodeRec(root.right, val, comparator);
         } else {
             if ((root.left == null) || root.right == null) {
                 Node<T> temp = root.left != null ? root.left : root.right;
@@ -74,7 +83,7 @@ public class BinaryTreeImpl<E> implements BinaryTree {
             } else {
                 Node<T> temp = minValueNode(root.right);
                 root.data = temp.data;
-                root.right = deleteNode(root.right, temp.data, comparator);
+                root.right = deleteNodeRec(root.right, temp.data, comparator);
             }
 
 
@@ -98,14 +107,14 @@ public class BinaryTreeImpl<E> implements BinaryTree {
             }
         }
 
-            return root;
+        return root;
     }
 
 
-    private <T> Node<T> minValueNode(Node<T> root){
+    private Node<T> minValueNode(Node<T> root) {
         Node<T> curr = root;
 
-        while (curr.left != null){
+        while (curr.left != null) {
             curr = curr.left;
         }
         return curr;
@@ -118,7 +127,7 @@ public class BinaryTreeImpl<E> implements BinaryTree {
         return N.height;
     }
 
-    private <T> Node<T> rightRotate(Node<T> y) {
+    private Node<T> rightRotate(Node<T> y) {
         Node<T> x = y.left;
         Node<T> T2 = x.right;
 
@@ -131,7 +140,7 @@ public class BinaryTreeImpl<E> implements BinaryTree {
         return x;
     }
 
-    private <T> Node<T> leftRotate(Node<T> x) {
+    private Node<T> leftRotate(Node<T> x) {
         Node<T> y = x.right;
         Node<T> T2 = y.left;
 
@@ -144,10 +153,14 @@ public class BinaryTreeImpl<E> implements BinaryTree {
         return y;
     }
 
-    private <T> int getBalanced(Node<T> N) {
+    private int getBalanced(Node<T> N) {
         if (N == null) {
             return 0;
         }
         return getHeight(N.left) - getHeight(N.right);
+    }
+
+    public Node<T> getRoot() {
+        return this.root;
     }
 }
