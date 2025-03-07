@@ -28,7 +28,7 @@ public class Main {
                     String data = r.readLine();
                     try {
                         Integer intData = Integer.parseInt(data);
-                        tree.insertNode(intData, intComparator);
+                        tree.insertNode(intData);
                     } catch (NumberFormatException e) {
                         System.out.println("Incorrect format");
                     }
@@ -38,7 +38,7 @@ public class Main {
                     String data = r.readLine();
                     try {
                         Integer intData = Integer.parseInt(data);
-                        tree.deleteNode(intData, intComparator);
+                        tree.deleteNode(intData);
                     } catch (NumberFormatException e) {
                         System.out.println("Incorrect format");
                     }
@@ -56,14 +56,14 @@ public class Main {
                             if (data[0].equals("1")) {
                                 try {
                                     Integer intData = Integer.parseInt(data[1]);
-                                    tree.insertNode(intData, intComparator);
+                                    tree.insertNode(intData);
                                 } catch (NumberFormatException e) {
                                     System.out.println("Incorrect format");
                                 }
                             } else if (data[0].equals("2")) {
                                 try {
                                     Integer intData = Integer.parseInt(data[1]);
-                                    tree.deleteNode(intData, intComparator);
+                                    tree.deleteNode(intData);
                                 } catch (NumberFormatException e) {
                                     System.out.println("Incorrect format");
                                 }
