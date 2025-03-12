@@ -2,10 +2,8 @@ package org.example;
 
 
 import org.example.binarytree.BinaryTreeImpl;
-import org.example.binarytree.Node;
 
 import java.io.*;
-import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {

@@ -1,11 +1,28 @@
 package org.example.binarytree;
 
+import org.example.comparator.ComparatorFactory;
+import org.example.comparator.GenericComparatorFactory;
+import org.example.comparator.IntegerComparator;
+import org.example.comparator.StringComparator;
 import org.example.util.BTreePrinter;
 
 import java.util.Comparator;
 
-public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
+public class BinaryTreeImpl<T> implements BinaryTree<T> {
     private Node<T> root = null;
+    private Comparator<T> comparator = null;
+
+    public class Node<T> {
+        public T data;
+        public Node<T> left, right;
+        public int height;
+
+        public Node(T data) {
+            this.data = data;
+            left = right = null;
+            height = 1;
+        }
+    }
 
     @Override
     public void draw() {
@@ -28,7 +45,11 @@ public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
             return root;
         }
 
-        int comparison = compare(val, root.data);
+        if (comparator == null){
+            createComparator(val);
+        }
+
+        int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
             root.left = insertNodeRec(root.left, val);
         } else if (comparison > 0) {
@@ -40,13 +61,13 @@ public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
         root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right));
         int balance = getBalanced(root);
 
-        if (balance > 1 && compare(val, root.left.data) < 0) return rightRotate(root);
-        if (balance < -1 && compare(val, root.right.data) > 0) return leftRotate(root);
-        if (balance > 1 && compare(val, root.left.data) > 0) {
+        if (balance > 1 && comparator.compare(val, root.left.data) < 0) return rightRotate(root);
+        if (balance < -1 && comparator.compare(val, root.right.data) > 0) return leftRotate(root);
+        if (balance > 1 && comparator.compare(val, root.left.data) > 0) {
             root.left = leftRotate(root.left);
             return rightRotate(root);
         }
-        if (balance < -1 && compare(val, root.right.data) < 0) {
+        if (balance < -1 && comparator.compare(val, root.right.data) < 0) {
             root.right = rightRotate(root.right);
             return leftRotate(root);
         }
@@ -64,7 +85,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
             return null;
         }
 
-        int comparison = compare(val, root.data);
+        int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
             root.left = deleteNodeRec(root.left, val);
         } else if (comparison > 0) {
@@ -94,13 +115,13 @@ public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
 
             int balance = getBalanced(root);
 
-            if (balance > 1 && compare(val, root.left.data) < 0) return rightRotate(root);
-            if (balance < -1 && compare(val, root.right.data) > 0) return leftRotate(root);
-            if (balance > 1 && compare(val, root.left.data) > 0) {
+            if (balance > 1 && comparator.compare(val, root.left.data) < 0) return rightRotate(root);
+            if (balance < -1 && comparator.compare(val, root.right.data) > 0) return leftRotate(root);
+            if (balance > 1 && comparator.compare(val, root.left.data) > 0) {
                 root.left = leftRotate(root.left);
                 return rightRotate(root);
             }
-            if (balance < -1 && compare(val, root.right.data) < 0) {
+            if (balance < -1 && comparator.compare(val, root.right.data) < 0) {
                 root.right = rightRotate(root.right);
                 return leftRotate(root);
             }
@@ -163,24 +184,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T>, Comparator<T> {
         return this.root;
     }
 
-    @Override
-    public int compare(T o1, T o2) {
-        if (o1 == null && o2 == null) return 0;
-        if (o1 == null) return -1;
-        if (o2 == null) return 1;
-
-        if (o1.getClass() != o2.getClass()) {
-            throw new IllegalArgumentException("Can't compare two different classes");
-        }
-
-        if (o1 instanceof String){
-            return ((String) o1).compareTo((String) o2);
-        } else if (o1 instanceof Integer) {
-            return ((Integer) o1).compareTo((Integer) o2);
-        } else if (o1 instanceof Double){
-            return ((Double) o1).compareTo((Double) o2);
-        } else {
-            throw new IllegalArgumentException("Can't compare " + o1.getClass());
-        }
+    private void createComparator(T val){
+        ComparatorFactory factory = GenericComparatorFactory.getFactory(val);
+        comparator = factory.createComparator();
     }
+
 }
