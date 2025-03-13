@@ -12,4 +12,20 @@ public abstract class ComparatorFactory{
             return Double::compare;
         }
     }
+
+    static class IntegerComparator extends ComparatorFactory{
+
+        @Override
+        public Comparator<Integer> createComparator() {
+            return Integer::compare;
+        }
+    }
+
+    static class StringComparator extends ComparatorFactory{
+
+        @Override
+        public Comparator<String> createComparator() {
+            return String::compareTo;
+        }
+    }
 }

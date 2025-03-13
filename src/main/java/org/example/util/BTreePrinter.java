@@ -6,13 +6,13 @@ import java.util.List;
 import org.example.binarytree.BinaryTreeImpl;
 
 public class BTreePrinter {
-    public static <T> void printNode(BinaryTreeImpl<T>.Node<T> root) {
+    public static <T> void printNode(BinaryTreeImpl.Node<T> root) {
         int maxLevel = BTreePrinter.maxLevel(root);
 
         printNodeInternal(Collections.singletonList(root), 1, maxLevel);
     }
 
-    private static <T> void printNodeInternal(List<BinaryTreeImpl<T>.Node<T>> nodes, int level, int maxLevel) {
+    private static <T> void printNodeInternal(List<BinaryTreeImpl.Node<T>> nodes, int level, int maxLevel) {
         if (nodes.isEmpty() || BTreePrinter.isAllElementsNull(nodes))
             return;
 
@@ -23,8 +23,8 @@ public class BTreePrinter {
 
         BTreePrinter.printWhitespaces(firstSpaces);
 
-        List<BinaryTreeImpl<T>.Node<T>> newNodes = new ArrayList<BinaryTreeImpl<T>.Node<T>>();
-        for (BinaryTreeImpl<T>.Node<T> node : nodes) {
+        List<BinaryTreeImpl.Node<T>> newNodes = new ArrayList<BinaryTreeImpl.Node<T>>();
+        for (BinaryTreeImpl.Node<T> node : nodes) {
             if (node != null) {
                 System.out.print(node.data);
                 newNodes.add(node.left);
@@ -73,7 +73,7 @@ public class BTreePrinter {
             System.out.print(" ");
     }
 
-    private static <T> int maxLevel(BinaryTreeImpl<T>.Node<T> node) {
+    private static <T> int maxLevel(BinaryTreeImpl.Node<T> node) {
         if (node == null)
             return 0;
 

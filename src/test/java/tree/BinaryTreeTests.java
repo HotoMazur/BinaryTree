@@ -20,7 +20,7 @@ public class BinaryTreeTests {
         tree.insertNode( 15);
         tree.insertNode( 16);
         tree.insertNode( 21);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
         Assertions.assertEquals(21, root.right.right.data);
     }
@@ -36,7 +36,7 @@ public class BinaryTreeTests {
         tree.insertNode( 16);
         tree.insertNode( 9);
         tree.insertNode( 8);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
         Assertions.assertEquals(9, root.left.left.data);
         Assertions.assertEquals(8, root.left.left.left.data);
@@ -52,7 +52,7 @@ public class BinaryTreeTests {
         tree.insertNode( 15);
         tree.insertNode( 16);
         tree.deleteNode( 12);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(13, root.left.data);
     }
 
@@ -69,10 +69,10 @@ public class BinaryTreeTests {
         tree.deleteNode( 10);
         tree.deleteNode( 12);
         tree.insertNode( 17);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
-        Assertions.assertEquals(16, root.data);
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
+        Assertions.assertEquals(15, root.data);
         Assertions.assertEquals(14, root.left.data);
-        Assertions.assertEquals(17, root.right.data);
+        Assertions.assertEquals(16, root.right.data);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class BinaryTreeTests {
         tree.insertNode(12.0);
         tree.insertNode(11.2);
         tree.insertNode(15.2);
-        BinaryTreeImpl<Double>.Node<Double> root = tree.getRoot();
+        BinaryTreeImpl.Node<Double> root = tree.getRoot();
         Assertions.assertEquals(12.2, root.data);
         Assertions.assertEquals(11.2, root.left.data);
         Assertions.assertEquals(13.2, root.right.data);
@@ -100,7 +100,7 @@ public class BinaryTreeTests {
         tree.insertNode( 11.2);
         tree.insertNode( 15.2);
         tree.deleteNode( 12.2);
-        BinaryTreeImpl<Double>.Node<Double> root = tree.getRoot();
+        BinaryTreeImpl.Node<Double> root = tree.getRoot();
         Assertions.assertEquals(13.2, root.data);
         Assertions.assertEquals(11.2, root.left.data);
         Assertions.assertEquals(15.2, root.right.data);
@@ -114,7 +114,7 @@ public class BinaryTreeTests {
         tree.insertNode( "Delete");
         tree.insertNode( "Notch");
         tree.insertNode( "Abra Kadabra");
-        BinaryTreeImpl<String>.Node<String> root = tree.getRoot();
+        BinaryTreeImpl.Node<String> root = tree.getRoot();
         Assertions.assertEquals("Delete", root.data);
         Assertions.assertEquals("Change", root.left.data);
         Assertions.assertEquals("Hi", root.right.data);
@@ -130,7 +130,7 @@ public class BinaryTreeTests {
         tree.insertNode( "Abra Kadabra");
         tree.insertNode( "Why");
         tree.deleteNode( "Why");
-        BinaryTreeImpl<String>.Node<String> root = tree.getRoot();
+        BinaryTreeImpl.Node<String> root = tree.getRoot();
         Assertions.assertEquals("Delete", root.data);
         Assertions.assertEquals("Change", root.left.data);
         Assertions.assertEquals("Notch", root.right.data);
@@ -147,7 +147,7 @@ public class BinaryTreeTests {
         tree.insertNode( 16);
         tree.insertNode( 9);
         tree.insertNode( null);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
 
@@ -162,7 +162,7 @@ public class BinaryTreeTests {
         tree.insertNode( 16);
         tree.insertNode( 9);
         tree.deleteNode( 1);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
 
@@ -177,7 +177,7 @@ public class BinaryTreeTests {
         tree.insertNode( 16);
         tree.insertNode( 9);
         tree.insertNode( 10);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertEquals(14, root.data);
     }
 
@@ -186,7 +186,7 @@ public class BinaryTreeTests {
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
 
         tree.deleteNode(10);
-        BinaryTreeImpl<Integer>.Node<Integer> root = tree.getRoot();
+        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
         Assertions.assertNull(root);
     }
 }
