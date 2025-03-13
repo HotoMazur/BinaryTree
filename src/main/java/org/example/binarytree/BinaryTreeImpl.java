@@ -32,7 +32,6 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         this.root = insertNodeRec(this.root, val);
     }
 
-
     public Node<T> insertNodeRec(Node<T> root, T val) {
         root = handleInsertBaseCase(root, val);
         if (val == null) return root;
@@ -66,7 +65,6 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         root = performDelete(root, val);
         return root != null ? makeBalance(root, val) : null;
     }
-
 
     private Node<T> minValueNode(Node<T> root) {
         Node<T> curr = root;
@@ -186,5 +184,4 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         root.right = deleteNodeRec(root.right, successor.data);
         return root;
     }
-
 }

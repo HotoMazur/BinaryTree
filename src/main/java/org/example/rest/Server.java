@@ -23,8 +23,7 @@ public class Server<T> {
     private void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        server.createContext("/insert", new InsertHandler());
-        server.createContext("/delete", new deleteHandler());
+        server.createContext("/tree", new TreeHandler());
 
         server.setExecutor(null);
         server.start();
@@ -38,29 +37,28 @@ public class Server<T> {
         }
     }
 
-    class InsertHandler implements HttpHandler {
+    class TreeHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("POST".equals(exchange.getRequestMethod())) {
-                String requestBody = getDataFromBody(exchange);
-                tree.insertNode((T) requestBody.trim());
-                sendResponse(exchange, "Inserted: " + requestBody, 200);
-            } else {
+                insertNodeRest(exchange);
+            } else if ("DELETE".equals(exchange.getRequestMethod())) {
+                deleteNodeRest(exchange);
+            }else {
                 sendMethodNotAllowed(exchange);
             }
         }
-    }
 
-    class deleteHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            if ("DELETE".equals(exchange.getRequestMethod())) {
+        private void insertNodeRest(HttpExchange exchange) throws IOException {
+                String requestBody = getDataFromBody(exchange);
+                tree.insertNode((T) requestBody.trim());
+                sendResponse(exchange, "Inserted: " + requestBody, 200);
+        }
+
+        private void deleteNodeRest(HttpExchange exchange) throws IOException {
                 String requestBody = getDataFromBody(exchange);
                 tree.deleteNode((T) requestBody.trim());
                 sendResponse(exchange, "Deleted: " + requestBody, 200);
-            } else {
-                sendMethodNotAllowed(exchange);
-            }
         }
     }
 
