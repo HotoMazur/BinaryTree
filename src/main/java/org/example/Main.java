@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
-    public static <T> void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         BinaryTreeImpl<Integer> tree = new BinaryTreeImpl<>();
@@ -19,18 +19,10 @@ public class Main {
             System.out.println("1: Read from file\n2: Read from terminal\n3: Start server\n4: Stop server\n5: Draw Tree\n6: Stop Program");
             String operation = r.readLine();
             switch (operation) {
-                case "1" -> {
-                    nodeFileHandler(r, tree);
-                }
-                case "2" -> {
-                    startTerminal(r, tree);
-                }
-                case "3" -> {
-                    server = startRestServer(server, tree);
-                }
-                case "4" -> {
-                    server = stopRestServer(server);
-                }
+                case "1" -> nodeFileHandler(r, tree);
+                case "2" -> startTerminal(r, tree);
+                case "3" -> server = startRestServer(server, tree);
+                case "4" -> server = stopRestServer(server);
                 case "5" -> tree.draw();
                 case "6" -> {
                     return;
@@ -66,12 +58,8 @@ public class Main {
             System.out.println("1: Insert Node\n2: Delete Node\n3: Draw Tree\n4: Stop Program");
             String operation1 = r.readLine();
             switch (operation1) {
-                case "1" -> {
-                    insertNodeTerminal(r, tree);
-                }
-                case "2" -> {
-                    deleteDataFromTerminal(r, tree);
-                }
+                case "1" -> insertNodeTerminal(r, tree);
+                case "2" -> deleteDataFromTerminal(r, tree);
                 case "3" -> tree.draw();
                 case "4" -> {
                     return;

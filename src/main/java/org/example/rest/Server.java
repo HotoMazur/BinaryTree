@@ -23,7 +23,7 @@ public class Server<T> {
     private void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        server.createContext("/tree", new TreeHandler());
+        server.createContext("/api/v1/tree", new TreeHandler());
 
         server.setExecutor(null);
         server.start();
