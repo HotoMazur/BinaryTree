@@ -2,10 +2,10 @@ package org.example.comparator;
 
 import java.util.Comparator;
 
-public abstract class ComparatorFactory{
-    public abstract <T> Comparator<T>  createComparator();
+public abstract class ComparatorFactory<T>{
+    public abstract Comparator<T>  createComparator();
 
-    static class DoubleComparator extends ComparatorFactory{
+    static class DoubleComparator extends ComparatorFactory<Double>{
 
         @Override
         public Comparator<Double> createComparator() {
@@ -13,7 +13,7 @@ public abstract class ComparatorFactory{
         }
     }
 
-    static class IntegerComparator extends ComparatorFactory{
+    static class IntegerComparator extends ComparatorFactory<Integer>{
 
         @Override
         public Comparator<Integer> createComparator() {
@@ -21,7 +21,7 @@ public abstract class ComparatorFactory{
         }
     }
 
-    static class StringComparator extends ComparatorFactory{
+    static class StringComparator extends ComparatorFactory<String>{
 
         @Override
         public Comparator<String> createComparator() {

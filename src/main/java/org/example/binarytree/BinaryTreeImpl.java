@@ -39,7 +39,6 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
         ensureComparator(val);
 
-
         int comparison = comparator.compare(val, root.data);
         if (comparison < 0) {
             root.left = insertNodeRec(root.left, val);
@@ -48,7 +47,6 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         } else {
             System.out.println("Value already exists");
         }
-
 
         root = makeBalance(root, val);
 
@@ -79,7 +77,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return curr;
     }
 
-    private <T> int getHeight(Node<T> N) {
+    private int getHeight(Node<T> N) {
         if (N == null) {
             return 0;
         }
@@ -144,7 +142,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
     }
 
     private void createComparator(T val) {
-        ComparatorFactory factory = GenericComparatorFactory.getFactory(val);
+        ComparatorFactory<T> factory = GenericComparatorFactory.getFactory(val);
         comparator = factory.createComparator();
     }
 
