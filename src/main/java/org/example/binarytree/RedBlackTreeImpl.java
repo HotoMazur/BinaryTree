@@ -33,7 +33,7 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             } else if (comparison > 0) {
                 node = node.right;
             } else {
-                throw new IllegalArgumentException("BST already contains a node with key " + val);
+                throw new IllegalArgumentException("BST already contains a node with value " + val);
             }
         }
 
@@ -210,7 +210,6 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         return node;
     }
 
-
     private void handleRedSibling(Node<T> node, Node<T> sibling) {
         sibling.color = TreeColor.BLACK;
         node.parent.color = TreeColor.RED;
@@ -247,7 +246,6 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             rightRotate(node.parent);
         }
     }
-
 
     private void rightRotate(Node<T> node) {
         Node<T> parent = node.parent;
