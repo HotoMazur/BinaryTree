@@ -2,7 +2,7 @@ package org.example.binarytree;
 
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
-import org.example.util.BTreePrinter;
+import org.example.util.AVLTreePrinter;
 
 import java.util.Comparator;
 
@@ -24,14 +24,16 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
     @Override
     public void draw() {
-        BTreePrinter.printNode(this.root);
+        AVLTreePrinter.printNode(this.root);
     }
 
+    @LogOperation(operation = "insert", logResult = true)
     @Override
     public void insertNode(T val) {
         this.root = insertNodeRec(this.root, val);
     }
 
+    @LogOperation(operation = "insert_recursive")
     public Node<T> insertNodeRec(Node<T> root, T val) {
         root = handleInsertBaseCase(root, val);
         if (val == null) return root;
@@ -52,11 +54,13 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return root;
     }
 
+    @LogOperation(operation = "delete", logResult = true)
     @Override
     public void deleteNode(T val) {
         this.root = deleteNodeRec(this.root, val);
     }
 
+    @LogOperation(operation = "delete_recursive")
     public Node<T> deleteNodeRec(Node<T> root, T val) {
         if (root == null) {
             return root;
@@ -118,6 +122,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return getHeight(N.left) - getHeight(N.right);
     }
 
+    @LogOperation(operation = "balance")
     private Node<T> makeBalance(Node<T> root, T val) {
         root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right));
         int balance = getBalanced(root);

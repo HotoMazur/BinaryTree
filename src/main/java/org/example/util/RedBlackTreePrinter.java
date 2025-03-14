@@ -1,19 +1,25 @@
 package org.example.util;
 
+import org.example.binarytree.RedBlackTreeImpl;
+import org.example.constant.TreeColor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.example.binarytree.BinaryTreeImpl;
 
-public class BTreePrinter {
-    public static <T> void printNode(BinaryTreeImpl.Node<T> root) {
-        int maxLevel = BTreePrinter.maxLevel(root);
+public class RedBlackTreePrinter {
+    private static final String RED = "\u001B[31m";
+    private static final String RESET = "\u001B[0m";
+
+
+    public static <T> void printNode(RedBlackTreeImpl.Node<T> root) {
+        int maxLevel = RedBlackTreePrinter.maxLevel(root);
 
         printNodeInternal(Collections.singletonList(root), 1, maxLevel);
     }
 
-    private static <T> void printNodeInternal(List<BinaryTreeImpl.Node<T>> nodes, int level, int maxLevel) {
-        if (nodes.isEmpty() || BTreePrinter.isAllElementsNull(nodes))
+    private static <T> void printNodeInternal(List<RedBlackTreeImpl.Node<T>> nodes, int level, int maxLevel) {
+        if (nodes.isEmpty() || RedBlackTreePrinter.isAllElementsNull(nodes))
             return;
 
         int floor = maxLevel - level;
@@ -21,12 +27,16 @@ public class BTreePrinter {
         int firstSpaces = (int) Math.pow(2, (floor)) - 1;
         int betweenSpaces = (int) Math.pow(2, (floor + 1)) - 1;
 
-        BTreePrinter.printWhitespaces(firstSpaces);
+        RedBlackTreePrinter.printWhitespaces(firstSpaces);
 
-        List<BinaryTreeImpl.Node<T>> newNodes = new ArrayList<BinaryTreeImpl.Node<T>>();
-        for (BinaryTreeImpl.Node<T> node : nodes) {
+        List<RedBlackTreeImpl.Node<T>> newNodes = new ArrayList<RedBlackTreeImpl.Node<T>>();
+        for (RedBlackTreeImpl.Node<T> node : nodes) {
             if (node != null) {
-                System.out.print(node.data);
+                if (node.color == TreeColor.RED) {
+                    System.out.print(RED + node.data + RESET);
+                } else {
+                    System.out.print(node.data + RESET);
+                }
                 newNodes.add(node.left);
                 newNodes.add(node.right);
             } else {
@@ -35,31 +45,31 @@ public class BTreePrinter {
                 System.out.print(" ");
             }
 
-            BTreePrinter.printWhitespaces(betweenSpaces);
+            RedBlackTreePrinter.printWhitespaces(betweenSpaces);
         }
         System.out.println("");
 
         for (int i = 1; i <= endgeLines; i++) {
             for (int j = 0; j < nodes.size(); j++) {
-                BTreePrinter.printWhitespaces(firstSpaces - i);
+                RedBlackTreePrinter.printWhitespaces(firstSpaces - i);
                 if (nodes.get(j) == null) {
-                    BTreePrinter.printWhitespaces(endgeLines + endgeLines + i + 1);
+                    RedBlackTreePrinter.printWhitespaces(endgeLines + endgeLines + i + 1);
                     continue;
                 }
 
                 if (nodes.get(j).left != null)
                     System.out.print("/");
                 else
-                    BTreePrinter.printWhitespaces(1);
+                    RedBlackTreePrinter.printWhitespaces(1);
 
-                BTreePrinter.printWhitespaces(i + i - 1);
+                RedBlackTreePrinter.printWhitespaces(i + i - 1);
 
                 if (nodes.get(j).right != null)
                     System.out.print("\\");
                 else
-                    BTreePrinter.printWhitespaces(1);
+                    RedBlackTreePrinter.printWhitespaces(1);
 
-                BTreePrinter.printWhitespaces(endgeLines + endgeLines - i);
+                RedBlackTreePrinter.printWhitespaces(endgeLines + endgeLines - i);
             }
 
             System.out.println("");
@@ -73,11 +83,11 @@ public class BTreePrinter {
             System.out.print(" ");
     }
 
-    private static <T> int maxLevel(BinaryTreeImpl.Node<T> node) {
+    private static <T> int maxLevel(RedBlackTreeImpl.Node<T> node) {
         if (node == null)
             return 0;
 
-        return Math.max(BTreePrinter.maxLevel(node.left), BTreePrinter.maxLevel(node.right)) + 1;
+        return Math.max(RedBlackTreePrinter.maxLevel(node.left), RedBlackTreePrinter.maxLevel(node.right)) + 1;
     }
 
     private static <T> boolean isAllElementsNull(List<T> list) {
