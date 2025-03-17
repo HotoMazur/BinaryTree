@@ -3,6 +3,7 @@ package org.example.rest;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
 
 import java.io.*;
@@ -12,10 +13,10 @@ import java.util.Scanner;
 
 public class Server<T> {
 
-    private final BinaryTreeImpl<T> tree;
+    private final BinaryTree<T> tree;
     private HttpServer server;
 
-    public Server(BinaryTreeImpl<T> tree) throws IOException {
+    public Server(BinaryTree<T> tree) throws IOException {
         this.tree = tree;
         startServer();
     }
