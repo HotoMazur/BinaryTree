@@ -3,6 +3,8 @@ package org.example.binarytree;
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
 import org.example.util.AVLTreePrinter;
+import org.example.util.LogOperation;
+import org.example.util.TrackPerformance;
 
 import java.util.Comparator;
 
@@ -27,6 +29,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         AVLTreePrinter.printNode(this.root);
     }
 
+    @TrackPerformance(unit = "ns", logExecution = true)
     @LogOperation(operation = "insert", logResult = true)
     @Override
     public void insertNode(T val) {
@@ -54,6 +57,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return root;
     }
 
+    @TrackPerformance(unit = "ms", logExecution = true)
     @LogOperation(operation = "delete", logResult = true)
     @Override
     public void deleteNode(T val) {
@@ -122,6 +126,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return getHeight(N.left) - getHeight(N.right);
     }
 
+    @TrackPerformance(unit = "ns", logExecution = true)
     @LogOperation(operation = "balance")
     private Node<T> makeBalance(Node<T> root, T val) {
         root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right));

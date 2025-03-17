@@ -3,8 +3,11 @@ package org.example;
 
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
+import org.example.util.LogOperation;
 import org.example.binarytree.RedBlackTreeImpl;
 import org.example.rest.Server;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.Scanner;
@@ -88,44 +91,75 @@ public class Main {
         }
     }
 
-    private static void insertNodeFile(String[] data, BinaryTree<Integer> tree) {
+    private static void insertNodeFile(Integer data, BinaryTree<Integer> tree) {
         try {
-            Integer intData = Integer.parseInt(data[1]);
-            tree.insertNode(intData);
+            tree.insertNode(data);
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
         }
     }
 
-    private static void deleteNodeFile(String[] data, BinaryTree<Integer> tree) {
+    private static void deleteNodeFile(Integer data, BinaryTree<Integer> tree) {
         try {
-            Integer intData = Integer.parseInt(data[1]);
-            tree.deleteNode(intData);
+
+            tree.deleteNode(data);
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
         }
     }
 
+    @LogOperation(operation = "read_file")
     private static void nodeFileHandler(BufferedReader r, BinaryTree<Integer> tree) throws IOException {
         System.out.println("Write full file name");
         String filename = r.readLine();
-        File file = new File(filename);
-        try {
-            Scanner myReader = new Scanner(file);
-            while (myReader.hasNextLine()) {
-                String line = myReader.nextLine();
-                String[] data = line.split(" ");
-                if (data[0].equals("1")) {
-                    insertNodeFile(data, tree);
-                } else if (data[0].equals("2")) {
-                    deleteNodeFile(data, tree);
+        if (filename.endsWith(".json")){
+            handleJsonFile(filename, tree);
+        } else {
+            File file = new File(filename);
+            try {
+                Scanner myReader = new Scanner(file);
+                while (myReader.hasNextLine()) {
+                    String line = myReader.nextLine();
+                    String[] data = line.split(" ");
+                    if (data[0].equals("1")) {
+                        insertNodeFile(Integer.valueOf(data[1]), tree);
+                    } else if (data[0].equals("2")) {
+                        deleteNodeFile(Integer.valueOf(data[1]), tree);
+                    }
                 }
+            } catch (FileNotFoundException e) {
+                System.out.println("Can't find file with this name");
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Can't find file with this name");
         }
     }
 
+    @LogOperation(operation = "read_file")
+    private static void handleJsonFile(String filename, BinaryTree<Integer> tree) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            StringBuilder jsonContent = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                jsonContent.append(line);
+            }
+
+            JSONArray jsonArray = new JSONArray(jsonContent.toString());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                int method = obj.getInt("method");
+                int value = obj.getInt("value");
+
+                if (method == 1) {
+                    insertNodeFile(value, tree);
+                } else {
+                    deleteNodeFile(value, tree);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @LogOperation(operation = "start_server")
     private static Server<Integer> startRestServer(Server<Integer> server, BinaryTree<Integer> tree) throws IOException {
         if (server == null) {
             return new Server<>(tree);
@@ -135,6 +169,7 @@ public class Main {
         return null;
     }
 
+    @LogOperation(operation = "stop_server")
     private static Server<Integer> stopRestServer(Server<Integer> server) {
         if (server != null) {
             server.stop();

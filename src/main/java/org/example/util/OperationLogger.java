@@ -1,7 +1,6 @@
 package org.example.util;
 
 import org.example.binarytree.BinaryTreeImpl;
-import org.example.binarytree.LogOperation;
 
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
@@ -33,7 +32,7 @@ public class OperationLogger {
         for (Object arg : args) {
             sb.append(arg).append(", ");
         }
-        return sb.length() > 0 ? sb.substring(0, sb.length() - 2) : "";
+        return !sb.isEmpty() ? sb.substring(0, sb.length() - 2) : "";
     }
 
     public static void main(String[] args) throws Exception {
