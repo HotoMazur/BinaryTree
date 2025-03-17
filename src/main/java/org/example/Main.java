@@ -3,6 +3,7 @@ package org.example;
 
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
+import org.example.util.InputValidator;
 import org.example.util.LogOperation;
 import org.example.binarytree.RedBlackTreeImpl;
 import org.example.rest.Server;
@@ -10,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class Main {
@@ -59,9 +62,13 @@ public class Main {
         String data = r.readLine();
         try {
             Integer intData = Integer.parseInt(data);
-            tree.insertNode(intData);
+            Method method = tree.getClass().getMethod("insertNode", Object.class);
+            InputValidator.validateInput(tree, method, new Object[]{intData});
+//            tree.insertNode(intData);
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,9 +77,13 @@ public class Main {
         String data = r.readLine();
         try {
             Integer intData = Integer.parseInt(data);
-            tree.deleteNode(intData);
+            Method method = tree.getClass().getMethod("deleteNode", Object.class);
+            InputValidator.validateInput(tree, method, new Object[]{intData});
+//            tree.deleteNode(intData);
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -5,12 +5,14 @@ import org.example.comparator.GenericComparatorFactory;
 import org.example.util.AVLTreePrinter;
 import org.example.util.LogOperation;
 import org.example.util.TrackPerformance;
+import org.example.util.ValidateInput;
 
 import java.util.Comparator;
 
 public class BinaryTreeImpl<T> implements BinaryTree<T> {
     private Node<T> root = null;
     private Comparator<T> comparator = null;
+    private Class<?> expectedType = null;
 
     public static class Node<T> {
         public T data;
@@ -29,6 +31,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         AVLTreePrinter.printNode(this.root);
     }
 
+    @ValidateInput(maxValue = 100)
     @TrackPerformance(unit = "ns", logExecution = true)
     @LogOperation(operation = "insert", logResult = true)
     @Override
@@ -40,6 +43,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
     public Node<T> insertNodeRec(Node<T> root, T val) {
         root = handleInsertBaseCase(root, val);
         if (val == null) return root;
+        if (expectedType == null) {
+            expectedType = val.getClass();
+        }
 
         ensureComparator(val);
 
@@ -57,7 +63,8 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         return root;
     }
 
-    @TrackPerformance(unit = "ms", logExecution = true)
+    @ValidateInput()
+    @TrackPerformance(unit = "ns", logExecution = true)
     @LogOperation(operation = "delete", logResult = true)
     @Override
     public void deleteNode(T val) {
@@ -193,5 +200,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         root.data = successor.data;
         root.right = deleteNodeRec(root.right, successor.data);
         return root;
+    }
+
+    public Class<?> getExpectedType() {
+        return expectedType;
     }
 }

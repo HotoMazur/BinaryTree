@@ -28,11 +28,6 @@ public class PerformanceTracker {
                 result  = method.invoke(target, args);
                 endTime = System.currentTimeMillis() / 1000;
             }
-            case "ms" -> {
-                startTime = System.currentTimeMillis();
-                result  = method.invoke(target, args);
-                endTime = System.currentTimeMillis();
-            }
             default -> {
                 startTime = System.currentTimeMillis();
                 result  = method.invoke(target, args);
