@@ -1,15 +1,20 @@
 package org.example.binarytree;
 
+import liquibase.database.Database;
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
+import org.example.database.DatabaseManager;
 import org.example.util.RedBlackTreePrinter;
 import org.example.constant.TreeColor;
 
+import javax.xml.crypto.Data;
+import java.sql.SQLException;
 import java.util.Comparator;
 
 public class RedBlackTreeImpl<T> implements BinaryTree<T> {
     private Node<T> root = null;
     private Comparator<T> comparator = null;
+    private String treeType = "RB";
 
     @Override
     public void draw() {
@@ -41,6 +46,9 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         newNode.color = TreeColor.RED;
         newNode.parent = parent;
 
+        Long parentId = (parent != null) ? getNodeId(parent.data) : null;
+        DatabaseManager.insertNode(treeType, (Integer)val, null, newNode.color.name(), parentId, null, null);
+
         if (parent == null) {
             root = newNode;
             root.color = TreeColor.BLACK;
@@ -68,6 +76,7 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
         if (grandparent == null) {
             parent.color = TreeColor.BLACK;
+            updateNodeInDatabase(parent);
             return;
         }
 
@@ -77,6 +86,10 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             parent.color = TreeColor.BLACK;
             grandparent.color = TreeColor.RED;
             uncle.color = TreeColor.BLACK;
+
+            updateNodeInDatabase(parent);
+            updateNodeInDatabase(grandparent);
+            updateNodeInDatabase(uncle);
 
             fixPropertiesAfterInsertion(grandparent);
         } else if (parent == grandparent.left) {
@@ -88,6 +101,9 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
             parent.color = TreeColor.BLACK;
             grandparent.color = TreeColor.RED;
+
+            updateNodeInDatabase(parent);
+            updateNodeInDatabase(grandparent);
         } else {
             if (node == parent.left) {
                 rightRotate(parent);
@@ -98,6 +114,9 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
             parent.color = TreeColor.BLACK;
             grandparent.color = TreeColor.RED;
+
+            updateNodeInDatabase(parent);
+            updateNodeInDatabase(grandparent);
         }
     }
 
@@ -128,9 +147,13 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             node.data = successor.data;
             movedUpNode = deleteNodeWithZeroOrOneChild(successor);
             deletedNodeColor = successor.color;
+
+            DatabaseManager.deleteNode(getNodeId(successor.data));
         } else {
             movedUpNode = deleteNodeWithZeroOrOneChild(node);
             deletedNodeColor = node.color;
+
+            DatabaseManager.deleteNode(getNodeId(node.data));
         }
 
         if (deletedNodeColor == TreeColor.BLACK && movedUpNode != null) {
@@ -139,6 +162,7 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
         if (root != null) {
             root.color = TreeColor.BLACK;
+            updateNodeInDatabase(root);
         }
     }
 
@@ -151,12 +175,14 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             if (root != null) {
                 root.parent = null;
                 root.color = TreeColor.BLACK;
+                updateNodeInDatabase(root);
             }
             return child;
         }
 
         if (child != null) {
             child.parent = parent;
+            updateNodeInDatabase(child);
         }
 
         if (parent.left == node) {
@@ -165,6 +191,7 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             parent.right = child;
         }
 
+        updateNodeInDatabase(parent);
         return child;
     }
 
@@ -189,6 +216,8 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             } else {
                 fixPropertiesAfterDelete(node.parent);
             }
+            updateNodeInDatabase(sibling);
+            updateNodeInDatabase(node.parent);
         } else {
             handleBlackSiblingWithAtLeastOneRedChild(node, sibling);
         }
@@ -219,6 +248,9 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         } else {
             rightRotate(node.parent);
         }
+
+        updateNodeInDatabase(sibling);
+        updateNodeInDatabase(node.parent);
     }
 
     private void handleBlackSiblingWithAtLeastOneRedChild(Node<T> node, Node<T> sibling) {
@@ -245,6 +277,11 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             sibling.left.color = TreeColor.BLACK;
             rightRotate(node.parent);
         }
+
+        updateNodeInDatabase(sibling);
+        updateNodeInDatabase(node.parent);
+        if (nodeIsLeftChild && sibling.right != null) updateNodeInDatabase(sibling.right);
+        if (!nodeIsLeftChild && sibling.left != null) updateNodeInDatabase(sibling.left);
     }
 
     private void rightRotate(Node<T> node) {
@@ -254,12 +291,16 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         node.left = leftChild.right;
         if (leftChild.right != null) {
             leftChild.right.parent = node;
+            updateNodeInDatabase(leftChild.right);
         }
 
         leftChild.right = node;
         node.parent = leftChild;
 
         replaceParentsChild(parent, node, leftChild);
+
+        updateNodeInDatabase(node);
+        updateNodeInDatabase(leftChild);
     }
 
     private void leftRotate(Node<T> node) {
@@ -269,12 +310,16 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         node.right = rightChild.left;
         if (rightChild.left != null) {
             rightChild.left.parent = node;
+            updateNodeInDatabase(rightChild.left);
         }
 
         rightChild.left = node;
         node.parent = rightChild;
 
         replaceParentsChild(parent, node, rightChild);
+
+        updateNodeInDatabase(node);
+        updateNodeInDatabase(rightChild);
     }
 
     private void replaceParentsChild(Node<T> parent, Node<T> oldChild, Node<T> newChild) {
@@ -291,6 +336,8 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         if (newChild != null) {
             newChild.parent = parent;
         }
+
+        if (parent != null) updateNodeInDatabase(parent);
     }
 
     private Node<T> findNode(T val) {
@@ -323,12 +370,26 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         }
     }
 
+    private Long getNodeId(T value) {
+        Node<T> curr = findNode(value);
+        return curr.id;
+    }
+
+    private void updateNodeInDatabase(Node<T> node) {
+        if (node == null) return;
+        Long parentId = (node.parent != null) ? getNodeId(node.parent.data) : null;
+        Long leftId = (node.left != null) ? getNodeId(node.left.data) : null;
+        Long rightId = (node.right != null) ? getNodeId(node.right.data) : null;
+        DatabaseManager.updateNode(getNodeId(node.data), null, node.color.name(), parentId, leftId, rightId);
+    }
+
     public static class Node<T> {
         public T data;
         public Node<T> left;
         public Node<T> right;
         public Node<T> parent;
         public TreeColor color;
+        public long id;
 
         public Node(T data) {
             this.data = data;

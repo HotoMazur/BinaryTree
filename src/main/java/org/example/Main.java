@@ -104,18 +104,23 @@ public class Main {
 
     private static void insertNodeFile(Integer data, BinaryTree<Integer> tree) {
         try {
-            tree.insertNode(data);
+            Method method = tree.getClass().getMethod("insertNode", Object.class);
+            InputValidator.validateInput(tree, method, new Object[]{data});
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private static void deleteNodeFile(Integer data, BinaryTree<Integer> tree) {
         try {
-
-            tree.deleteNode(data);
+            Method method = tree.getClass().getMethod("deleteNode", Object.class);
+            InputValidator.validateInput(tree, method, new Object[]{data});
         } catch (NumberFormatException e) {
             System.out.println("Incorrect format");
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

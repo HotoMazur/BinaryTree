@@ -2,6 +2,7 @@ package org.example.binarytree;
 
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
+import org.example.database.DatabaseManager;
 import org.example.util.AVLTreePrinter;
 import org.example.util.LogOperation;
 import org.example.util.TrackPerformance;
@@ -13,11 +14,13 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
     private Node<T> root = null;
     private Comparator<T> comparator = null;
     private Class<?> expectedType = null;
+    private String treeType = "AVL";
 
     public static class Node<T> {
         public T data;
         public Node<T> left, right;
         public int height;
+        public long id;
 
         public Node(T data) {
             this.data = data;
@@ -60,6 +63,10 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
         root = makeBalance(root, val);
 
+        Long leftId = root.left != null ? root.left.id : null;
+        Long rightId = root.right != null ? root.right.id : null;
+        DatabaseManager.updateNode(root.id, root.height, null, null, leftId, rightId);
+
         return root;
     }
 
@@ -78,6 +85,14 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
         }
 
         root = performDelete(root, val);
+        if (root == null) {
+            DatabaseManager.deleteNode(root.id);
+        } else {
+            Long leftId = root.left != null ? root.left.id : null;
+            Long rightId = root.right != null ? root.right.id : null;
+            DatabaseManager.updateNode(root.id, root.height, null, null, leftId, rightId);
+        }
+
         return root != null ? makeBalance(root, val) : null;
     }
 
@@ -163,7 +178,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
     private Node<T> handleInsertBaseCase(Node<T> root, T val) {
         if (root == null) {
-            return new Node<>(val);
+            Node<T> newNode = new Node<>(val);
+            DatabaseManager.insertNode(treeType, (Integer)val, 1, null, null, null, null);
+            return newNode;
         }
         if (val == null) {
             System.out.println("Can't add null");
