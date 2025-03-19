@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: dmytromazurev
+      runOnChange: true
       changes:
         - createTable:
             tableName: binary_tree_nodes
