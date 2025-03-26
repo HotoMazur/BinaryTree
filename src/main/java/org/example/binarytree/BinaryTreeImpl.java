@@ -86,7 +86,7 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
 
         root = performDelete(root, val);
         if (root == null) {
-            DatabaseManager.deleteNode(root.id);
+//            DatabaseManager.deleteNode(root.id);
         } else {
             Long leftId = root.left != null ? root.left.id : null;
             Long rightId = root.right != null ? root.right.id : null;

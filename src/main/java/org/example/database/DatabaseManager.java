@@ -5,9 +5,12 @@ import org.example.constant.TreeColor;
 import java.sql.*;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:postgresql://localhost:5432/BinaryTree";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    private static final String URL = "jdbc:postgresql://" +
+            System.getenv("DB_HOST") + ":" +
+            System.getenv("DB_PORT") + "/" +
+            System.getenv("DB_NAME");
+    private static final String USER = System.getenv("DB_USER");
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
 
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);

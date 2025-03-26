@@ -1,6 +1,12 @@
 package org.example;
 
 
+import liquibase.Contexts;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.resource.ClassLoaderResourceAccessor;
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
 import org.example.util.InputValidator;
@@ -13,10 +19,22 @@ import org.json.JSONObject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Scanner;
 
 public class Main {
+    private static final String DB_URL = "jdbc:postgresql://" + System.getenv("DB_HOST") + ":" + System.getenv("DB_PORT") + "/" + System.getenv("DB_NAME");
+    private static final String DB_USER = System.getenv("DB_USER");
+    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
+
     public static void main(String[] args) throws IOException {
+        try {
+            applyDatabaseMigrations();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         Server<Integer> server = null;
@@ -34,6 +52,14 @@ public class Main {
                 RedBlackTreeImpl<Integer> redBlackTree = new RedBlackTreeImpl<>();
                 startBinaryTree(r, server, redBlackTree);
             }
+        }
+    }
+
+    private static void applyDatabaseMigrations() throws Exception {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
+            Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.yaml", new ClassLoaderResourceAccessor(), database);
+            liquibase.update(new Contexts());
         }
     }
 
