@@ -77,7 +77,6 @@ public class Main {
             updateCommand.addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogFile);
             updateCommand.execute();
 
-            System.out.println("Database migrations applied successfully");
         } catch (LiquibaseException e) {
             throw new RuntimeException("Failed to apply database migrations", e);
         }
