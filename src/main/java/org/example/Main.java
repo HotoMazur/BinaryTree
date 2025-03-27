@@ -3,10 +3,15 @@ package org.example;
 
 import liquibase.Contexts;
 import liquibase.Liquibase;
+import liquibase.command.CommandScope;
+import liquibase.command.core.UpdateCommandStep;
+import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.FileSystemResourceAccessor;
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
 import org.example.util.InputValidator;
@@ -23,6 +28,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Scanner;
 
+import static liquibase.Scope.Attr.database;
+
 public class Main {
     private static final String DB_URL = "jdbc:postgresql://" + System.getenv("DB_HOST") + ":" + System.getenv("DB_PORT") + "/" + System.getenv("DB_NAME");
     private static final String DB_USER = System.getenv("DB_USER");
@@ -30,6 +37,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         try {
+            System.out.println(DB_URL);
+            System.out.println(DB_USER);
+            System.out.println(DB_PASSWORD);
             applyDatabaseMigrations();
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,9 +67,19 @@ public class Main {
 
     private static void applyDatabaseMigrations() throws Exception {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            System.out.println("Checking file: /app/db/changelog/db-changelog-master.yaml");
+            System.out.println("File exists: " + new java.io.File("/app/db/changelog/db-changelog-master.yaml").exists());
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-            Liquibase liquibase = new Liquibase("db/changelog/db.changelog-master.yaml", new ClassLoaderResourceAccessor(), database);
-            liquibase.update(new Contexts());
+
+            String changeLogFile = "db/changelog/db-changelog-master.yaml";
+            CommandScope updateCommand = new CommandScope(UpdateCommandStep.COMMAND_NAME);
+            updateCommand.addArgumentValue("database", database);
+            updateCommand.addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogFile);
+            updateCommand.execute();
+
+            System.out.println("Database migrations applied successfully");
+        } catch (LiquibaseException e) {
+            throw new RuntimeException("Failed to apply database migrations", e);
         }
     }
 
