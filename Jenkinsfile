@@ -2,7 +2,7 @@ pipeline {
     agent any
 
         environment {
-            DOCKER_IMAGE = 'binaryTree'
+            DOCKER_IMAGE = 'binary-tree'
         }
 
     stages {
