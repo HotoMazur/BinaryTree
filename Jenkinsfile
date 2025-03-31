@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+        environment {
+            DOCKER_IMAGE = 'binaryTree'
+        }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -14,6 +18,13 @@ pipeline {
                 script {
                     // Run Maven to clean and build the project
                     sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+        stage('Build Docker image') {
+            steps{
+                script{
+                    sh 'docker build -t $DOCKER_IMAGE .'
                 }
             }
         }
