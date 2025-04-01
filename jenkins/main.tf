@@ -22,6 +22,41 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id                  = aws_vpc.jenkins_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "eu-central-1a"
+
+  tags = {
+    Name = "Public-Subnet-2"
+  }
+}
+
+resource "aws_subnet" "public_subnet_3" {
+  vpc_id                  = aws_vpc.jenkins_vpc.id
+  cidr_block              = "10.0.3.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "eu-central-1c"
+
+  tags = {
+    Name = "Public-Subnet-3"
+  }
+}
+
+resource "aws_db_subnet_group" "default" {
+  name       = "jenkins-db-subnet-group"
+  subnet_ids = [
+    aws_subnet.public_subnet.id,
+    aws_subnet.public_subnet_2.id,
+    aws_subnet.public_subnet_3.id
+  ]
+
+  tags = {
+    Name = "Jenkins-DB-Subnet-Group"
+  }
+}
+
 resource "aws_internet_gateway" "jenkins_gw" {
   vpc_id = aws_vpc.jenkins_vpc.id
 
@@ -73,6 +108,13 @@ resource "aws_security_group" "jenkins_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port = 5432
+    to_port   = 5432
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port = 0
     to_port   = 0
@@ -87,10 +129,12 @@ resource "aws_security_group" "jenkins_sg" {
 
 resource "aws_instance" "jenkins_ec2" {
   ami           = "ami-0bade3941f267d2b8"
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   key_name      = "terraformkp"
   subnet_id     = aws_subnet.public_subnet.id
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_s3_instance_profile.name
 
   root_block_device {
     volume_type           = "gp3"
@@ -101,13 +145,29 @@ resource "aws_instance" "jenkins_ec2" {
 
   associate_public_ip_address = true
 
-  user_data = file("install_jenksin.sh")
+  user_data = templatefile("install_jenksin.sh", {
+    rds_endpoint = aws_db_instance.default.endpoint
+    s3_bucket    = aws_s3_bucket.liquibase_bucket.bucket
+  })
 
   tags = {
     Name = "Jenkins"
   }
 
-  depends_on = [aws_internet_gateway.jenkins_gw]
+  depends_on = [aws_internet_gateway.jenkins_gw, aws_db_instance.default, aws_s3_bucket.liquibase_bucket]
+}
+
+resource "aws_db_instance" "default" {
+  allocated_storage    = 10
+  db_name              = "binaryTree"
+  engine               = "postgres"
+  engine_version       = "11.22"
+  instance_class       = "db.t3.micro"
+  db_subnet_group_name   = aws_db_subnet_group.default.name
+  vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
+  username             = "postgres"
+  password             = "postgres"
+  skip_final_snapshot  = true
 }
 
 resource "aws_s3_bucket" "jenkins_s3_bucket" {
@@ -131,4 +191,76 @@ resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   rule {
     object_ownership = "ObjectWriter"
   }
+}
+
+resource "aws_s3_bucket" "liquibase_bucket" {
+  bucket = "my-liquibase-migrations-${random_string.suffix.result}"
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.liquibase_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_object" "db_files" {
+  for_each = fileset("./db", "**")
+  bucket   = aws_s3_bucket.liquibase_bucket.id
+  key      = "db/${each.value}"
+  source   = "./db/${each.value}"
+  etag     = filemd5("./db/${each.value}")
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+resource "aws_iam_role" "ec2_s3_role" {
+  name = "ec2_s3_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "s3_access_policy" {
+  name        = "S3AccessPolicy"
+  description = "IAM policy to allow EC2 access to S3"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = "s3:*"
+        Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.liquibase_bucket.bucket}",      # Bucket-level permissions
+          "arn:aws:s3:::${aws_s3_bucket.liquibase_bucket.bucket}/*"     # Object-level permissions
+        ]
+        Effect   = "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
+  policy_arn = aws_iam_policy.s3_access_policy.arn
+  role       = aws_iam_role.ec2_s3_role.name
+}
+
+resource "aws_iam_instance_profile" "ec2_s3_instance_profile" {
+  name = "ec2_s3_instance_profile"
+  role = aws_iam_role.ec2_s3_role.name
 }
