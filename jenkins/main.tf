@@ -206,11 +206,11 @@ resource "aws_s3_bucket_versioning" "versioning" {
 }
 
 resource "aws_s3_object" "db_files" {
-  for_each = fileset("./db", "**")
+  for_each = fileset("../db", "**")
   bucket   = aws_s3_bucket.liquibase_bucket.id
   key      = "db/${each.value}"
-  source   = "./db/${each.value}"
-  etag     = filemd5("./db/${each.value}")
+  source   = "../db/${each.value}"
+  etag     = filemd5("../db/${each.value}")
 }
 
 resource "random_string" "suffix" {
