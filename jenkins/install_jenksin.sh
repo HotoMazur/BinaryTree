@@ -16,6 +16,7 @@ sudo systemctl start jenkins
 
 # Install additional dependencies
 sudo yum install maven -y
+sudo yum install git -y
 sudo yum install -y amazon-linux-extras
 sudo yum install docker -y
 sudo systemctl start docker

@@ -44,19 +44,6 @@ resource "aws_subnet" "public_subnet_3" {
   }
 }
 
-resource "aws_db_subnet_group" "default" {
-  name       = "jenkins-db-subnet-group"
-  subnet_ids = [
-    aws_subnet.public_subnet.id,
-    aws_subnet.public_subnet_2.id,
-    aws_subnet.public_subnet_3.id
-  ]
-
-  tags = {
-    Name = "Jenkins-DB-Subnet-Group"
-  }
-}
-
 resource "aws_internet_gateway" "jenkins_gw" {
   vpc_id = aws_vpc.jenkins_vpc.id
 
@@ -178,6 +165,19 @@ resource "aws_s3_bucket" "jenkins_s3_bucket" {
   }
 }
 
+resource "aws_db_subnet_group" "default" {
+  name       = "jenkins-db-subnet-group"
+  subnet_ids = [
+    aws_subnet.public_subnet.id,
+    aws_subnet.public_subnet_2.id,
+    aws_subnet.public_subnet_3.id
+  ]
+
+  tags = {
+    Name = "Jenkins-DB-Subnet-Group"
+  }
+}
+
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
   bucket = aws_s3_bucket.jenkins_s3_bucket.id
   acl    = "private"
@@ -238,7 +238,7 @@ resource "aws_iam_role" "ec2_s3_role" {
 
 resource "aws_iam_policy" "s3_access_policy" {
   name        = "S3AccessPolicy"
-  description = "IAM policy to allow EC2 access to S3"
+  description = "IAM policy to allow EC2 access to S3 and ECR"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -249,6 +249,16 @@ resource "aws_iam_policy" "s3_access_policy" {
           "arn:aws:s3:::${aws_s3_bucket.liquibase_bucket.bucket}",      # Bucket-level permissions
           "arn:aws:s3:::${aws_s3_bucket.liquibase_bucket.bucket}/*"     # Object-level permissions
         ]
+        Effect   = "Allow"
+      },
+      {
+        Action   = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
         Effect   = "Allow"
       }
     ]
@@ -263,4 +273,13 @@ resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
 resource "aws_iam_instance_profile" "ec2_s3_instance_profile" {
   name = "ec2_s3_instance_profile"
   role = aws_iam_role.ec2_s3_role.name
+}
+
+resource "aws_ecr_repository" "foo" {
+  name                 = "binary-tree"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
