@@ -256,7 +256,8 @@ resource "aws_iam_policy" "s3_access_policy" {
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage"
+          "ecr:BatchGetImage",
+          "ecr:InitiateLayerUpload"
         ]
         Resource = "*"
         Effect   = "Allow"
