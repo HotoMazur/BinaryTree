@@ -1,17 +1,6 @@
 package org.example;
 
 
-import liquibase.Contexts;
-import liquibase.Liquibase;
-import liquibase.command.CommandScope;
-import liquibase.command.core.UpdateCommandStep;
-import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.FileSystemResourceAccessor;
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
 import org.example.util.InputValidator;
@@ -24,28 +13,10 @@ import org.json.JSONObject;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Scanner;
 
-import static liquibase.Scope.Attr.database;
-
 public class Main {
-    private static final String DB_URL = "jdbc:postgresql://" + System.getenv("DB_HOST") + ":" + System.getenv("DB_PORT") + "/" + System.getenv("DB_NAME");
-    private static final String DB_USER = System.getenv("DB_USER");
-    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
-
     public static void main(String[] args) throws IOException {
-        try {
-            System.out.println(DB_URL);
-            System.out.println(DB_USER);
-            System.out.println(DB_PASSWORD);
-            applyDatabaseMigrations();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         Server<Integer> server = null;
 
@@ -64,25 +35,6 @@ public class Main {
             }
         }
     }
-
-    private static void applyDatabaseMigrations() throws Exception {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            System.out.println("Checking file: /app/db/changelog/db-changelog-master.yaml");
-            System.out.println("File exists: " + new java.io.File("/app/db/changelog/db-changelog-master.yaml").exists());
-            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-
-            String changeLogFile = "db/changelog/db-changelog-master.yaml";
-            CommandScope updateCommand = new CommandScope(UpdateCommandStep.COMMAND_NAME);
-            updateCommand.addArgumentValue("database", database);
-            updateCommand.addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogFile);
-            updateCommand.execute();
-
-        } catch (LiquibaseException e) {
-            throw new RuntimeException("Failed to apply database migrations", e);
-        }
-    }
-
-
 
     private static void startBinaryTree(BufferedReader r, Server<Integer> server, BinaryTree<Integer> tree) throws IOException {
         while (true) {
@@ -173,7 +125,7 @@ public class Main {
     private static void nodeFileHandler(BufferedReader r, BinaryTree<Integer> tree) throws IOException {
         System.out.println("Write full file name");
         String filename = r.readLine();
-        if (filename.endsWith(".json")){
+        if (filename.endsWith(".json")) {
             handleJsonFile(filename, tree);
         } else {
             File file = new File(filename);

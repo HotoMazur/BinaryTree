@@ -2,12 +2,15 @@ pipeline {
     agent any
 
         environment {
-            AWS_ACCOUNT_ID="864899830569"
-            AWS_DEFAULT_REGION="eu-central-1"
+            AWS_ACCOUNT_ID = "864899830569"
+            AWS_DEFAULT_REGION = "eu-central-1"
             DOCKER_IMAGE = 'binary-tree'
-            IMAGE_REPO_NAME="binary-tree"
-            IMAGE_TAG="latest"
+            IMAGE_REPO_NAME = "binary-tree"
+            IMAGE_TAG = "latest"
             REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+            CLUSTER_NAME = "jenkins-eks-cluster"
+            KUBE_NAMESPACE = "default"
+            S3_BUCKET = "my-liquibase-migrations-pr5o7a6x"
         }
 
     stages {
@@ -48,6 +51,42 @@ pipeline {
                     }
               }
         }
+
+        stage('Configure AWS Credentials') {
+            steps {
+                script {
+                    sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
+                }
+            }
+        }
+
+        stage('Find deployment'){
+            steps{
+                script{
+                    sh "ls -l jenkins/kube/deployment.yaml"
+                }
+            }
+        }
+
+        stage('Update Deployment YAML') {
+            steps {
+                script {
+                    sh """
+                        sed -i 's|ECR_REPOSITORY_URL|${REPOSITORY_URI}|g' jenkins/kube/deployment.yaml
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    sh """
+                        kubectl apply -f jenkins/kube/deployment.yaml
+                    """
+                }
+            }
+        }
     }
 
     post {
@@ -58,5 +97,11 @@ pipeline {
         failure {
             echo "Maven build failed!"
         }
+        always {
+                    // Cleanup Docker images
+                    sh "docker rmi ${REPOSITORY_URI}:${IMAGE_TAG} || true"
+                    sh "docker rmi ${IMAGE_REPO_NAME}:${IMAGE_TAG} || true"
+                    sh "rm -f deployment.yaml || true"
+                }
     }
 }
