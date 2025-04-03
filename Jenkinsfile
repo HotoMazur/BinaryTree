@@ -11,6 +11,7 @@ pipeline {
             CLUSTER_NAME = "binary-tree"
             KUBE_NAMESPACE = "default"
             S3_BUCKET = "my-liquibase-migrations-pr5o7a6x"
+            SECURITY_GROUP_ID = "sg-084b66406d2e7b2a6"
         }
 
     stages {
@@ -55,6 +56,10 @@ pipeline {
                 script {
                     sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
                     sh "aws configure set region eu-central-1"
+                    def publicIp = sh(script: "curl -s ifconfig.me", returnStdout: true).trim()
+                    echo "Public IP: ${publicIp}"
+                    env.PUBLIC_IP = publicIp
+                    aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 443 --cidr ${env.PUBLIC_IP}/32 --region $AWS_REGION
                 }
             }
         }
@@ -62,12 +67,8 @@ pipeline {
         stage('Find deployment'){
             steps{
                 script{
-                    sh "kubectl get configmap aws-auth -n kube-system -o yaml"
-                    sh "ls -l jenkins/kube/deployment.yaml"
-                    sh "aws sts get-caller-identity"
-                    sh "aws eks describe-cluster --name binary-tree --query 'cluster.resourcesVpcConfig'"
-                    sh "kubectl config view --minify"
-                    sh "nslookup 07303EFCBEDC2A468F8CFC1AD198DB96.gr7.eu-central-1.eks.amazonaws.com"
+                    sh "aws ec2 describe-route-tables --filters 'Name=vpc-id,Values=vpc-0bf49f16776cc166c'"
+                    sh "kubectl get nodes"
                 }
             }
         }
