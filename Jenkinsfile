@@ -63,6 +63,9 @@ pipeline {
         stage('Find deployment'){
             steps{
                 script{
+
+                    sh "kubectl config view"
+                    sh "env | grep AWS"
                     sh "kubectl version"
                     sh "kubectl config view"
                     sh "aws ec2 describe-route-tables --filters 'Name=vpc-id,Values=vpc-0bf49f16776cc166c'"
