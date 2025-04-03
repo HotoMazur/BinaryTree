@@ -62,6 +62,7 @@ pipeline {
         stage('Find deployment'){
             steps{
                 script{
+                    sh "kubectl get configmap aws-auth -n kube-system -o yaml"
                     sh "ls -l jenkins/kube/deployment.yaml"
                     sh "aws sts get-caller-identity"
                     sh "aws eks describe-cluster --name binary-tree --query 'cluster.resourcesVpcConfig'"
