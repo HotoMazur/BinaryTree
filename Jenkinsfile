@@ -8,7 +8,7 @@ pipeline {
             IMAGE_REPO_NAME = "binary-tree"
             IMAGE_TAG = "latest"
             REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
-            CLUSTER_NAME = "jenkins-eks-cluster"
+            CLUSTER_NAME = "binary-tree"
             KUBE_NAMESPACE = "default"
             S3_BUCKET = "my-liquibase-migrations-pr5o7a6x"
         }
@@ -16,7 +16,6 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Checkout the code from your Git repository
                 git branch: 'main', url: 'https://github.com/HotoMazur/BinaryTree.git'
             }
         }
@@ -24,7 +23,6 @@ pipeline {
         stage('Build Maven Project') {
             steps {
                 script {
-                    // Run Maven to clean and build the project
                     sh 'mvn clean package -DskipTests'
                 }
             }

@@ -46,7 +46,8 @@ resource "aws_iam_policy" "s3_access_policy" {
           "ecr:BatchDeleteImage",
           "ecr:SetRepositoryPolicy",
           "ecr:DeleteRepositoryPolicy",
-          "ecr:GetAuthorizationToken"
+          "ecr:GetAuthorizationToken",
+          "eks:*"
         ]
         Resource = "*"
         Effect   = "Allow"
