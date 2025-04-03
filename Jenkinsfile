@@ -63,7 +63,6 @@ pipeline {
             steps{
                 script{
                     sh "ls -l jenkins/kube/deployment.yaml"
-                    sh "kubectl get nodes"
                     sh "aws sts get-caller-identity"
                     sh "aws eks describe-cluster --name binary-tree --query 'cluster.resourcesVpcConfig'"
                     sh "kubectl config view --minify"
