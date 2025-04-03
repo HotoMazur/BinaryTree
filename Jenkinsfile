@@ -74,7 +74,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        kubectl apply -f jenkins/kube/deployment.yaml
+                        kubectl apply -f jenkins/kube/deployment.yaml --validate=false
                     """
                 }
             }
