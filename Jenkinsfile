@@ -54,8 +54,10 @@ pipeline {
         stage('Configure AWS Credentials') {
             steps {
                 script {
-                    sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
+                    sh "aws eks update-kubeconfig --name binary-tree --region eu-central-1"
                     sh "aws configure set region eu-central-1"
+                    sh "kubectl version"
+                    sh "kubectl get nodes"
                 }
             }
         }
