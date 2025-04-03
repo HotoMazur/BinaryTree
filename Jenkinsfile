@@ -54,6 +54,7 @@ pipeline {
             steps {
                 script {
                     sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
+                    sh "aws configure set region eu-central-1"
                 }
             }
         }
@@ -62,7 +63,8 @@ pipeline {
             steps{
                 script{
                     sh "ls -l jenkins/kube/deployment.yaml"
-                    sh "kubectl get svc --namespace=kube-system"
+                    sh "kubectl get nodes"
+                    sh "aws sts get-caller-identity"
                     sh "aws eks describe-cluster --name binary-tree --query 'cluster.resourcesVpcConfig'"
                     sh "kubectl config view --minify"
                     sh "nslookup 07303EFCBEDC2A468F8CFC1AD198DB96.gr7.eu-central-1.eks.amazonaws.com"
