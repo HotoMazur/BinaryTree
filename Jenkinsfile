@@ -62,6 +62,10 @@ pipeline {
             steps{
                 script{
                     sh "ls -l jenkins/kube/deployment.yaml"
+                    sh "kubectl get svc --namespace=kube-system"
+                    sh "aws eks describe-cluster --name binary-tree --query 'cluster.resourcesVpcConfig'"
+                    sh "kubectl config view --minify"
+                    sh "nslookup 07303EFCBEDC2A468F8CFC1AD198DB96.gr7.eu-central-1.eks.amazonaws.com"
                 }
             }
         }

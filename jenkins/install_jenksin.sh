@@ -24,6 +24,10 @@ sudo systemctl enable docker
 sudo usermod -aG docker jenkins
 sudo systemctl restart jenkins
 
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
 # Install Liquibase
 wget https://github.com/liquibase/liquibase/releases/download/v4.17.0/liquibase-4.17.0.tar.gz
 tar -xvzf /liquibase-4.17.0.tar.gz -C /home/ec2-user/
