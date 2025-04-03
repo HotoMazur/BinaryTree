@@ -56,12 +56,6 @@ pipeline {
                 script {
                     sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
                     sh "aws configure set region eu-central-1"
-                    def publicIp = sh(script: "curl -s ifconfig.me", returnStdout: true).trim()
-                    echo "Public IP: ${publicIp}"
-                    env.PUBLIC_IP = publicIp
-                    sh """
-                        aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 443 --cidr ${env.PUBLIC_IP}/32 --region ${AWS_DEFAULT_REGION}
-                    """
                 }
             }
         }
@@ -69,6 +63,8 @@ pipeline {
         stage('Find deployment'){
             steps{
                 script{
+                    sh "kubectl --version"
+                    sh "kubectl config view"
                     sh "aws ec2 describe-route-tables --filters 'Name=vpc-id,Values=vpc-0bf49f16776cc166c'"
                     sh "kubectl get nodes"
                 }
