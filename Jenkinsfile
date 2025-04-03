@@ -60,7 +60,7 @@ pipeline {
                     echo "Public IP: ${publicIp}"
                     env.PUBLIC_IP = publicIp
                     sh """
-                        aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 443 --cidr ${env.PUBLIC_IP}/32 --region $AWS_REGION
+                        aws ec2 authorize-security-group-ingress --group-id $SECURITY_GROUP_ID --protocol tcp --port 443 --cidr ${env.PUBLIC_IP}/32 --region ${AWS_DEFAULT_REGION}
                     """
                 }
             }
