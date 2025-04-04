@@ -1,0 +1,55 @@
+services:
+  app:
+    build: ..
+    ports:
+      - "8081:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=BinaryTree
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+      tests:
+        condition: service_completed_successfully
+
+  db:
+    container_name: binary-db
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=BinaryTree
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  liquibase:
+    container_name: liquibase_postgres
+    image: liquibase/liquibase:4.31.1-alpine
+    command: liquibase --changelog-file=/db/changelog/db-changelog-master.yaml --url=jdbc:postgresql://binary-db:5432/BinaryTree --username=postgres --password=postgres update --log-level=info
+    volumes:
+      - ./db:/liquibase/db
+    depends_on:
+      - db
+    tty: true
+
+  tests:
+    image: maven:3.9.9-amazoncorretto-23-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: [ "sh", "-c", "mvn test" ]
+    depends_on:
+      db:
+        condition: service_healthy
