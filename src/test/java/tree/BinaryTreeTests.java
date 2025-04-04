@@ -2,12 +2,31 @@ package tree;
 
 import org.example.binarytree.BinaryTreeImpl;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Comparator;
 
 public class BinaryTreeTests {
 
+
+    private static final String URL = "jdbc:postgresql://binary-db:5432/BinaryTree";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+
+    @BeforeEach
+    void clearDatabase() {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM binary_tree_nodes");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Test

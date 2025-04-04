@@ -1,12 +1,8 @@
-version: '3.8'
 services:
   app:
     build: .
     ports:
       - "8081:8080"
-    depends_on:
-      liquibase:
-        condition: service_completed_successfully
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -15,8 +11,16 @@ services:
       - DB_PASSWORD=postgres
     stdin_open: true
     tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+      tests:
+        condition: service_completed_successfully
 
   db:
+    container_name: binary-db
     image: postgres:15-alpine
     environment:
       - POSTGRES_DB=BinaryTree
@@ -31,10 +35,20 @@ services:
       retries: 5
 
   liquibase:
-    image: liquibase/liquibase:4.27.0
-    command: --url="jdbc:postgresql://db:5432/BinaryTree?user=postgres&password=postgres" --changeLogFile=/changelog/db-changelog.yaml update
+    container_name: liquibase_postgres
+    image: liquibase/liquibase:4.31.1-alpine
+    command: liquibase --changelog-file=/db/changelog/db-changelog-master.yaml --url=jdbc:postgresql://binary-db:5432/BinaryTree --username=postgres --password=postgres update --log-level=info
     volumes:
-      - ./db/changelog/schema1/table/changelog.yaml:/changelog/db-changelog.yaml
+      - C:/Users/dmazurev/IdeaProjects/BinaryTree/db:/liquibase/db
+    depends_on:
+      - db
+
+  tests:
+    image: maven:3.9.9-amazoncorretto-23-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: [ "sh", "-c", "mvn test" ]
     depends_on:
       db:
         condition: service_healthy
