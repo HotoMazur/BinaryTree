@@ -13,3 +13,12 @@ jobs:
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
           compose-file: "docker-compose-test.yaml"
+
+      - name: Wait for DB to be ready
+        run: |
+          while ! docker exec binary-db pg_isready -U postgres; do
+            sleep 1
+          done
+
+      - name: Run tests
+        run: docker-compose -f docker-compose-test.yaml run tests
