@@ -39,7 +39,7 @@ services:
     image: liquibase/liquibase:4.31.1-alpine
     command: liquibase --changelog-file=/db/changelog/db-changelog-master.yaml --url=jdbc:postgresql://binary-db:5432/BinaryTree --username=postgres --password=postgres update --log-level=info
     volumes:
-      - ../db:/liquibase/db
+      - ./db:/liquibase/db
     depends_on:
       - db
     tty: true
@@ -48,7 +48,7 @@ services:
     image: maven:3.9.9-amazoncorretto-23-alpine
     working_dir: /app
     volumes:
-      - ..:/app
+      - .:/app
     command: [ "sh", "-c", "mvn test" ]
     depends_on:
       db:
