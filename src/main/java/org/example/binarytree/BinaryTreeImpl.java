@@ -39,6 +39,9 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
     @LogOperation(operation = "insert", logResult = true)
     @Override
     public void insertNode(T val) {
+        if (val == null) {
+            throw new IllegalArgumentException("Null values are not allowed");
+        }
         this.root = insertNodeRec(this.root, val);
     }
 
@@ -57,8 +60,6 @@ public class BinaryTreeImpl<T> implements BinaryTree<T> {
             root.left = insertNodeRec(root.left, val);
         } else if (comparison > 0) {
             root.right = insertNodeRec(root.right, val);
-        } else {
-            System.out.println("Value already exists");
         }
 
         root = makeBalance(root, val);

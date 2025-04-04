@@ -23,12 +23,13 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
     @Override
     public void insertNode(T val) {
+        if (val == null) {
+            throw new IllegalArgumentException("Null values are not allowed");
+        }
         Node<T> node = root;
         Node<T> parent = null;
 
-        if (val != null) {
-            ensureComparator(val);
-        }
+        ensureComparator(val);
 
         while (node != null) {
             int comparison = comparator.compare(val, node.data);
@@ -48,6 +49,11 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
         Long parentId = (parent != null) ? getNodeId(parent.data) : null;
         DatabaseManager.insertNode(treeType, (Integer)val, null, newNode.color.name(), parentId, null, null);
+        if (parent != null) {
+            updateNodeInDatabase(parent);
+        } else {
+            updateNodeInDatabase(newNode);
+        }
 
         if (parent == null) {
             root = newNode;
@@ -147,13 +153,18 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
             node.data = successor.data;
             movedUpNode = deleteNodeWithZeroOrOneChild(successor);
             deletedNodeColor = successor.color;
+            Long successorNodeId = getNodeId(successor.data);
+            if (successorNodeId != null) {
+                DatabaseManager.deleteNode(successorNodeId);
+            }
 
-            DatabaseManager.deleteNode(getNodeId(successor.data));
         } else {
             movedUpNode = deleteNodeWithZeroOrOneChild(node);
             deletedNodeColor = node.color;
-
-            DatabaseManager.deleteNode(getNodeId(node.data));
+            Long nodeId = getNodeId(node.data);
+            if (nodeId != null) {
+                DatabaseManager.deleteNode(nodeId);
+            }
         }
 
         if (deletedNodeColor == TreeColor.BLACK && movedUpNode != null) {
@@ -372,6 +383,9 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
 
     private Long getNodeId(T value) {
         Node<T> curr = findNode(value);
+        if (curr == null) {
+            return null;
+        }
         return curr.id;
     }
 
@@ -380,7 +394,14 @@ public class RedBlackTreeImpl<T> implements BinaryTree<T> {
         Long parentId = (node.parent != null) ? getNodeId(node.parent.data) : null;
         Long leftId = (node.left != null) ? getNodeId(node.left.data) : null;
         Long rightId = (node.right != null) ? getNodeId(node.right.data) : null;
-        DatabaseManager.updateNode(getNodeId(node.data), null, node.color.name(), parentId, leftId, rightId);
+        Long nodeId = getNodeId(node.data);
+        if (nodeId != null) {
+            DatabaseManager.updateNode(nodeId, null, node.color.name(), parentId, leftId, rightId);
+        }
+    }
+
+    public Node<T> getRoot() {
+        return root;
     }
 
     public static class Node<T> {

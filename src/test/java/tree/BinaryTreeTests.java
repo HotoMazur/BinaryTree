@@ -165,9 +165,10 @@ public class BinaryTreeTests {
         tree.insertNode( 15);
         tree.insertNode( 16);
         tree.insertNode( 9);
-        tree.insertNode( null);
-        BinaryTreeImpl.Node<Integer> root = tree.getRoot();
-        Assertions.assertEquals(14, root.data);
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            tree.insertNode(null);
+        });
+        Assertions.assertEquals("Null values are not allowed", exception.getMessage());
     }
 
     @Test
