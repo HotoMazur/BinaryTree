@@ -33,4 +33,5 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
+      liquibase:
+        condition: service_started
