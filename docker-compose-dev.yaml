@@ -1,0 +1,98 @@
+services:
+  app:
+    image: openjdk:23-jdk-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=BinaryTree
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+#      tests:
+#        condition: service_completed_successfully
+#      kafka:
+#        condition: service_started
+
+  db:
+    container_name: binary-db
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=BinaryTree
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  liquibase:
+    container_name: liquibase_postgres
+    image: liquibase/liquibase:4.31.1-alpine
+    command: liquibase --changelog-file=/db/changelog/db-changelog-master.yaml --url=jdbc:postgresql://binary-db:5432/BinaryTree --username=postgres --password=postgres update --log-level=info
+    volumes:
+      - ./db:/liquibase/db
+    depends_on:
+      db:
+        condition: service_healthy
+    tty: true
+
+#  tests:
+#    image: maven:3.9.9-amazoncorretto-23-alpine
+#    working_dir: /app
+#    volumes:
+#      - .:/app
+#    command: [ "sh", "-c", "mvn test" ]
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      liquibase:
+#        condition: service_completed_successfully
+
+#  kafka:
+#    image: apache/kafka-native:latest
+#    hostname: kafka
+#    container_name: kafka
+#    ports:
+#      - "9091:9091"
+#      - "9092:9092"
+#      - "9093:9093"
+#    environment:
+#      KAFKA_KRAFT_MODE: "true"
+#      KAFKA_PROCESS_ROLES: controller,broker
+#      KAFKA_NODE_ID: 1
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9091"
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,DOCKER:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9091,DOCKER://0.0.0.0:9093
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,DOCKER://kafka:9093
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_LOG_RETENTION_HOURS: 168
+#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+#      CLUSTER_ID: "Mk3OEYBSD34fcwNTJENDM2Qk"
+#
+#  kafka-ui:
+#    image: kafbat/kafka-ui:main
+#    ports:
+#      - "8082:8080"
+#    environment:
+#      DYNAMIC_CONFIG_ENABLED: "true"
+#      KAFKA_CLUSTERS_0_NAME: local
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+#    depends_on:
+#      - kafka

@@ -1,4 +1,4 @@
-package org.example.rest;
+package org.example.util.rest;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

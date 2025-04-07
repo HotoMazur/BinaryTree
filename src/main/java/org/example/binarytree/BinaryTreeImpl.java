@@ -2,11 +2,11 @@ package org.example.binarytree;
 
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
-import org.example.database.DatabaseManager;
-import org.example.util.AVLTreePrinter;
-import org.example.util.LogOperation;
-import org.example.util.TrackPerformance;
-import org.example.util.ValidateInput;
+import org.example.util.database.DatabaseManager;
+import org.example.util.printer.AVLTreePrinter;
+import org.example.util.Annotations.LogOperation;
+import org.example.util.Annotations.TrackPerformance;
+import org.example.util.Annotations.ValidateInput;
 
 import java.util.Comparator;
 

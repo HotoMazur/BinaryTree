@@ -3,10 +3,13 @@ package org.example;
 
 import org.example.binarytree.BinaryTree;
 import org.example.binarytree.BinaryTreeImpl;
-import org.example.util.InputValidator;
-import org.example.util.LogOperation;
+import org.example.kafka.KafkaSetup;
+import org.example.kafka.MyKafkaConsumer;
+import org.example.kafka.MyKafkaProducer;
+import org.example.util.AnnotationImpl.InputValidator;
+import org.example.util.Annotations.LogOperation;
 import org.example.binarytree.RedBlackTreeImpl;
-import org.example.rest.Server;
+import org.example.util.rest.Server;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +20,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        KafkaSetup.setup();
+        MyKafkaProducer.kafkaProduce("my-topic", "Hello, Kafka!");
+        MyKafkaConsumer.kafkaConsume("my-topic");
+
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
         Server<Integer> server = null;
 

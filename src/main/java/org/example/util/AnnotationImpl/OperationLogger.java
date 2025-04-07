@@ -1,6 +1,7 @@
-package org.example.util;
+package org.example.util.AnnotationImpl;
 
 import org.example.binarytree.BinaryTreeImpl;
+import org.example.util.Annotations.LogOperation;
 
 import java.lang.reflect.Method;
 import java.util.logging.Logger;

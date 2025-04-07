@@ -9,10 +9,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigint
-                  autoIncrement: true
+                  type: uuid
                   constraints:
                     primaryKey: true
+                    nullable: false
               - column:
                   name: tree_type
                   type: varchar(10)
@@ -33,19 +33,19 @@ databaseChangeLog:
                   defaultValue: 'BLACK'
               - column:
                   name: parent_id
-                  type: bigint
+                  type: uuid
                   constraints:
                     foreignKeyName: fk_parent
                     references: binary_tree_nodes(id)
               - column:
                   name: left_id
-                  type: bigint
+                  type: uuid
                   constraints:
                     foreignKeyName: fk_left
                     references: binary_tree_nodes(id)
               - column:
                   name: right_id
-                  type: bigint
+                  type: uuid
                   constraints:
                     foreignKeyName: fk_right
                     references: binary_tree_nodes(id)

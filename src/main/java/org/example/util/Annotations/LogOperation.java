@@ -1,13 +1,13 @@
-package org.example.util;
+package org.example.util.Annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface TrackPerformance {
-    String unit() default "ms";
-    boolean logExecution() default true;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LogOperation {
+    String operation();
+    boolean logResult() default false;
 }

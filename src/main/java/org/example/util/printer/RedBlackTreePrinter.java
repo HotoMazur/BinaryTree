@@ -1,7 +1,7 @@
-package org.example.util;
+package org.example.util.printer;
 
 import org.example.binarytree.RedBlackTreeImpl;
-import org.example.constant.TreeColor;
+import org.example.util.constant.TreeColor;
 
 import java.util.ArrayList;
 import java.util.Collections;

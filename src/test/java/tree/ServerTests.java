@@ -1,7 +1,7 @@
 package tree;
 
 import org.example.binarytree.BinaryTree;
-import org.example.rest.Server;
+import org.example.util.rest.Server;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

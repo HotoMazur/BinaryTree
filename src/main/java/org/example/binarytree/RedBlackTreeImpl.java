@@ -1,14 +1,11 @@
 package org.example.binarytree;
 
-import liquibase.database.Database;
 import org.example.comparator.ComparatorFactory;
 import org.example.comparator.GenericComparatorFactory;
-import org.example.database.DatabaseManager;
-import org.example.util.RedBlackTreePrinter;
-import org.example.constant.TreeColor;
+import org.example.util.database.DatabaseManager;
+import org.example.util.printer.RedBlackTreePrinter;
+import org.example.util.constant.TreeColor;
 
-import javax.xml.crypto.Data;
-import java.sql.SQLException;
 import java.util.Comparator;
 
 public class RedBlackTreeImpl<T> implements BinaryTree<T> {

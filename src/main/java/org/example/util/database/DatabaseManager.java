@@ -1,6 +1,6 @@
-package org.example.database;
+package org.example.util.database;
 
-import org.example.constant.TreeColor;
+import org.example.util.constant.TreeColor;
 
 import java.sql.*;
 
